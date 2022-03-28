@@ -158,10 +158,10 @@ const
 {$I sdlrect.inc}                 // 2.0.14
 {$I sdlrwops.inc}                // 2.0.14
 {$I sdlaudio.inc}
-{$I sdlblendmode.inc}
-{$I sdlsurface.inc}
-{$I sdlshape.inc}
-{$I sdlvideo.inc}
+{$I sdlblendmode.inc}            // 2.0.14
+{$I sdlsurface.inc}              // 2.0.14
+{$I sdlshape.inc}                // 2.0.14
+{$I sdlvideo.inc}                // 2.0.14
 {$I sdlhints.inc}
 {$I sdlloadso.inc}
 {$I sdlmessagebox.inc}           // 2.0.14
@@ -180,7 +180,7 @@ const
 {$I sdlclipboard.inc}
 {$I sdlcpuinfo.inc}
 {$I sdlfilesystem.inc}
-{$I sdllog.inc}
+{$I sdllog.inc}                  // 2.0.14
 {$I sdlsystem.inc}
 {$I sdl.inc}                     // 2.0.14
 
@@ -320,14 +320,14 @@ begin
   Result := (format and (SDL_PIXELFLAG(format) <> 1));
 end;
 
-//from "sdl_surface.h"
+// Macros from "sdl_surface.h"
 function SDL_LoadBMP(_file: PAnsiChar): PSDL_Surface;
 begin
   Result := SDL_LoadBMP_RW(SDL_RWFromFile(_file, 'rb'), 1);
 end;
 
 function SDL_SaveBMP(const surface: PSDL_Surface; const filename: AnsiString
-  ): cint32;
+  ): cint;
 begin
    Result := SDL_SaveBMP_RW(surface, SDL_RWFromFile(PAnsiChar(filename), 'wb'), 1)
 end;
@@ -338,6 +338,12 @@ end;
 function SDL_MUSTLOCK(const S: PSDL_Surface): Boolean;
 begin
   Result := ((S^.flags and SDL_RLEACCEL) <> 0)
+end;
+
+// Macros from "sdl_shape.h"
+function SDL_SHAPEMODEALPHA(mode: TWindowShapeMode): Boolean;
+begin
+  Result := (mode = ShapeModeDefault) or (mode = ShapeModeBinarizeAlpha) or (mode = ShapeModeReverseBinarizeAlpha);
 end;
 
 //from "sdl_sysvideo.h"
