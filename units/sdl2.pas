@@ -125,6 +125,9 @@ const
   {$IFDEF UNIX}
     {$IFDEF DARWIN}
       SDL_LibName = 'libSDL2.dylib';
+      {$IFDEF FPC}
+        {$LINKLIB libSDL2}
+      {$ENDIF}
     {$ELSE}
       {$IFDEF FPC}
         SDL_LibName = 'libSDL2.so';
@@ -153,7 +156,7 @@ const
 {$I sdlpower.inc}                // 2.0.14
 {$I sdlthread.inc}
 {$I sdlmutex.inc}                // 2.0.14 WIP
-{$I sdltimer.inc}                // 2.0.14
+{$I sdltimer.inc}                // 2.0.18
 {$I sdlpixels.inc}               // 2.0.14 WIP
 {$I sdlrect.inc}                 // 2.0.14
 {$I sdlrwops.inc}                // 2.0.14
@@ -162,7 +165,7 @@ const
 {$I sdlsurface.inc}              // 2.0.14
 {$I sdlshape.inc}                // 2.0.14
 {$I sdlvideo.inc}                // 2.0.14
-{$I sdlhints.inc}
+{$I sdlhints.inc}                // 2.0.20
 {$I sdlloadso.inc}
 {$I sdlmessagebox.inc}           // 2.0.14
 {$I sdlrenderer.inc}
@@ -177,10 +180,12 @@ const
 {$I sdlsensor.inc}
 {$I sdlsyswm.inc}
 {$I sdlevents.inc}
+{$I sdllocale.inc}               // 2.0.14
 {$I sdlclipboard.inc}
-{$I sdlcpuinfo.inc}
+{$I sdlcpuinfo.inc}              // 2.0.14
 {$I sdlfilesystem.inc}
 {$I sdllog.inc}                  // 2.0.14
+{$I sdlmisc.inc}                 // 2.0.14
 {$I sdlsystem.inc}
 {$I sdl.inc}                     // 2.0.14
 
