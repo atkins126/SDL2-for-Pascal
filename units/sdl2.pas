@@ -116,6 +116,11 @@ interface
       {$ENDIF}
   {$ENDIF}
 
+  {$IF DEFINED(UNIX) AND DEFINED(ANDROID) AND DEFINED(FPC)}
+    uses
+      ctypes;
+  {$ENDIF}
+
 const
 
   {$IFDEF WINDOWS}
@@ -134,6 +139,7 @@ const
       {$ELSE}
         SDL_LibName = 'libSDL2.so.0';
       {$ENDIF}
+      {$MESSAGE HINT 'Known MESA bug may generate float-point exception in software graphics mode! See https://github.com/PascalGameDevelopment/SDL2-for-Pascal/issues/56 for reference.'}
     {$ENDIF}
   {$ENDIF}
 
@@ -155,6 +161,7 @@ const
 {$I sdlplatform.inc}             // 2.0.14
 {$I sdlpower.inc}                // 2.0.14
 {$I sdlthread.inc}
+{$I sdlatomic.inc}               // 2.0.20
 {$I sdlmutex.inc}                // 2.0.14 WIP
 {$I sdltimer.inc}                // 2.0.18
 {$I sdlpixels.inc}               // 2.0.14 WIP
@@ -165,7 +172,7 @@ const
 {$I sdlsurface.inc}              // 2.0.14
 {$I sdlshape.inc}                // 2.0.14
 {$I sdlvideo.inc}                // 2.0.14
-{$I sdlhints.inc}                // 2.0.20
+{$I sdlhints.inc}                // 2.0.22
 {$I sdlloadso.inc}
 {$I sdlmessagebox.inc}           // 2.0.14
 {$I sdlrenderer.inc}             // 2.0.22
@@ -249,6 +256,31 @@ end;
 function SDL_RectEquals(const a, b: PSDL_Rect): Boolean;
 begin
   Result := (a^.x = b^.x) and (a^.y = b^.y) and (a^.w = b^.w) and (a^.h = b^.h);
+end;
+
+//from "sdl_atomic.h"
+function SDL_AtomicIncRef(atomic: PSDL_Atomic): cint;
+begin
+  Result := SDL_AtomicAdd(atomic, 1)
+end;
+
+function SDL_AtomicDecRef(atomic: PSDL_Atomic): Boolean;
+begin
+  Result := SDL_AtomicAdd(atomic, -1) = 1
+end;
+
+procedure SDL_CompilerBarrier();
+{$IFDEF FPC}
+begin
+  ReadWriteBarrier()
+{$ELSE}
+var
+  lock: TSDL_SpinLock;
+begin
+  lock := 0;
+  SDL_AtomicLock(@lock);
+  SDL_AtomicUnlock(@lock)
+{$ENDIF}
 end;
 
 //from "sdl_audio.h"

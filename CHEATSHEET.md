@@ -102,8 +102,24 @@ type
   end;
 ```
 
-Hint 1: If you have something like ```typedef struct name name```. it is likely
-that the declaration is somewhere else (even other file).
+Hint 1: If you have something like ```typedef struct name name```. the concrete
+structure is probably opaque. You should translate it as follows, although
+the best way to handle this is still not finally decided on. (see issue
+[#63](https://github.com/PascalGameDevelopment/SDL2-for-Pascal/issues/63))
+
+C:
+
+```
+typedef struct SDL_Window SDL_Window;
+```
+
+Pascal:
+
+```
+type
+  PSDL_Window = ^TSDL_Window;
+  TSDL_Window = record end;
+```
 
 ## Unions
 
@@ -150,4 +166,39 @@ function SDL_JoystickNameForIndex(device_index: cint): PAnsiChar; cdecl;
   external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_JoystickNameForIndex' {$ENDIF} {$ENDIF};
 ```
 
+## C Macros
+
+Macros are pre-processed constructs in C which have no analogue in Pascal.
+Usually a C macro is translated as a Pascal function and implemented in SDL2.pas.
+
+C:
+
+```
+#define SDL_VERSION_ATLEAST(X, Y, Z) \
+    (SDL_COMPILEDVERSION >= SDL_VERSIONNUM(X, Y, Z))
+```
+
+Pascal:
+
+_sdlversion.inc (declaration)_:
+```
+function SDL_VERSION_ATLEAST(X,Y,Z: cuint8): Boolean;
+```
+
+_sdl2.pas (implementation)_:
+```
+function SDL_VERSION_ATLEAST(X,Y,Z: cuint8): Boolean;
+begin
+  Result := SDL_COMPILEDVERSION >= SDL_VERSIONNUM(X,Y,Z);
+end;
+```
+Hint: As can be seen from this example, the macro has no clearly defined
+argument types and return value type. The types to be used for arguments and
+return values depend on the context in which this macro is used. Here from the
+context is known that X, Y and Z stand for the major version, minor version and
+the patch level which are declared to be 8 bit unsigned integers. From the
+context it is also clear, that the macro returns true or false, hence the
+function should return a Boolean value. The context does not suggest to use,
+e. g., TSDL_Bool here, although in a different context this could be the better
+translation.
 

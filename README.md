@@ -31,9 +31,8 @@ Please use the GitHub issue tracker for bug reports.
 - (Continously) Update files by new SDL2 functions and types which are present in more recent SDL2 versions.
 - (Continously atm.) Translate integer aliases into typed enums.
 See part Enums on the [Cheat sheet](CHEATSHEET.md) for reference.
-- (Continously) Check FPC/Delphi compatibility.
+- (Continously) improve Delphi-compatibility (and even more important, DO NOT break it)
 - (Continously) Adapt comments to [PasDoc format](https://pasdoc.github.io). (See issue [#22](https://github.com/PascalGameDevelopment/SDL2-for-Pascal/issues/22))
-- Update sdlthread.inc
 
 ## Code style guidelines
 
@@ -50,13 +49,19 @@ Ex.: `type` in C function `SDL_HasEvent(Uint32 type)` changes into `type_`
 in Pascal function `SDL_HasEvent(type_: TSDL_EventType)`.
 
 3. Use C data types like `cuint8`, `cuint16`, `cuint32`, `cint8`, `cint16`,
-`cint32`, `cfloat` and so on as often as possible if it is used  in the
-original code. Do not replace them by Pascal equivalents.
-Ex.: Use `cuint32` (if `Uint32` is used in
-the original code) instead of `UInt32`, `Cardinal`, `LongWord` or `DWord`.
-Exceptions: Replace `*char` by `PAnsiChar` (see issue [#26](https://github.com/PascalGameDevelopment/SDL2-for-Pascal/issues/26)) and `SDL_bool` by `Boolean` (see issue [#30](https://github.com/PascalGameDevelopment/SDL2-for-Pascal/issues/30)). 
+`cint32`, `cfloat` and so on if native C data types are used  in the
+original code. Note: For FPC you need to add the unit `ctypes` to use these C
+data types. For Delphi we have a temporary solution provided. (see issue [#67](https://github.com/PascalGameDevelopment/SDL2-for-Pascal/issues/67))
 
-4. Have a look at our [Translation Cheat Sheet](CHEATSHEET.md) for reference.
+**Example:** Use `cuint32` (if `Uint32` is used in
+the original code) instead of `UInt32`, `Cardinal`, `LongWord` or `DWord`.
+Exception: Replace `*char` by `PAnsiChar`! (see issue [#26](https://github.com/PascalGameDevelopment/SDL2-for-Pascal/issues/26))
+
+**Hint:** Use `TSDL_Bool` to translate `SDL_bool`. For [macro functions](CHEATSHEET.md) use `Boolean`. (see issue [#30](https://github.com/PascalGameDevelopment/SDL2-for-Pascal/issues/30)).
+
+4. If an identifier or a function declaration is gone, mark them as `deprecated`. (see issue [#34](https://github.com/PascalGameDevelopment/SDL2-for-Pascal/issues/34))
+
+5. Have a look at our [Translation Cheat Sheet](CHEATSHEET.md) for reference.
 
 ## Versions
 
@@ -64,9 +69,8 @@ The version tag (see [tags](https://github.com/PascalGameDevelopment/SDL2-for-Pa
 
 ### v2.x (work in progress)
 
-- be up-to-date with version 2.0.14 of the `SDL2 library`
+- be up-to-date with _at least_ version 2.0.14 of the `SDL2 library`
 - replaced all aliases by typed enums
-- improve Delphi-compatibility (and even more important, DO NOT break it)
 - (done) replace data types by c data types (see PR [#29](https://github.com/PascalGameDevelopment/SDL2-for-Pascal/pull/29)) 
 - (done) add folders to project
 - (done) shift all units into unit folder (see PR [#27](https://github.com/PascalGameDevelopment/SDL2-for-Pascal/pull/27))
