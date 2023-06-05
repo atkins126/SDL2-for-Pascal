@@ -24,14 +24,12 @@
 type
   DWord = LongWord;
 
+  ppcbool = ^pcbool;
   pcbool = ^cbool;
   cbool = LongBool;
   {$EXTERNALSYM cbool}
 
-  pcint = ^cint;
-  cint = Integer;
-  {$EXTERNALSYM cint}
-
+  ppcint8 = ^pcint8;
   pcint8 = ^cint8;
   cint8 = ShortInt;
   {$EXTERNALSYM cint8}
@@ -40,29 +38,33 @@ type
   cuint8 = Byte;
   {$EXTERNALSYM cuint8}
 
+  ppcint16 = ^pcint16;
   pcint16 = ^cint16;
   cint16 = SmallInt;
   {$EXTERNALSYM cint16}
 
+  ppcuint16 = ^pcuint16;
   pcuint16 = ^cuint16;
   cuint16 = Word;
   {$EXTERNALSYM cuint16}
 
+  ppcushort = ^pcushort;
+  pcushort = ^cushort;
+  cushort = Word;
+  {$EXTERNALSYM cushort}
+
+  ppcint32 = ^pcint32;
   pcint32 = ^cint32;
   cint32 = LongInt;
   {$EXTERNALSYM cint32}
 
+  ppcuint32 = ^pcuint32;
   pcuint32 = ^cuint32;
   cuint32 = LongWord;
   {$EXTERNALSYM cuint32}
 
-  culong = LongWord;
-  {$EXTERNALSYM culong}
-
-  cuint = LongWord;
-  {$EXTERNALSYM cuint}
-
   {$IFNDEF Has_Int64}
+     ppcint64 = ^pcint64;
      pcint64 = ^cint64;
      cint64 = record
        hi: cuint32;
@@ -70,6 +72,7 @@ type
      end;
     {$EXTERNALSYM cint64}
 
+    ppcuint64 = ^pcuint64;
     pcuint64 = ^cuint64;
     cuint64 = record
       hi: cuint32;
@@ -77,31 +80,105 @@ type
     end;
     {$EXTERNALSYM cuint64}
   {$ELSE}
+    ppcint64 = ^pcint64;
     pcint64 = ^cint64;
     cint64 = Int64;
     {$EXTERNALSYM cint64}
 
+    ppcuint64 = ^pcuint64;
     pcuint64 = ^cuint64;
     cuint64 = UInt64;
     {$EXTERNALSYM cuint64}
   {$ENDIF}
 
+  ppcsize_t = ^pcsize_t;
+  pcsize_t = ^csize_t;
   {$IFNDEF WIN64}
     csize_t = cuint32;
   {$ELSE}
     csize_t = cuint64;
   {$ENDIF}
-  {$EXTERNALSYM SIZE_T}
+  {$EXTERNALSYM csize_t}
 
+  ppcfloat = ^pcfloat;
   pcfloat = ^cfloat;
   cfloat = Single;
   {$EXTERNALSYM cfloat}
+
+  ppcdouble = ^pcdouble;
+  pcdouble = ^cdouble;
+  cdouble = Double;
+  {$EXTERNALSYM cfloat}
+
+  ppcint = ^pcint;
+  pcint = ^cint;
+
+  ppcuint = ^pcuint;
+  pcuint = ^cuint;
+
+  ppclong = ^pclong;
+  pclong = ^clong;
+
+  ppculong = ^pculong;
+  pculong = ^culong;
+  {
+    Integer type sizes based on:
+    https://en.cppreference.com/w/c/language/arithmetic_types#Data_models
+  }
+  cint = cint32;
+  cuint = cuint32;
+  {$IF DEFINED(CPU32) OR DEFINED(CPU32BITS)}
+    clong = cint32;
+    culong = cuint32;
+  {$ELSE} // 64-bit
+    {$IFDEF MSWINDOWS}
+      clong = cint32;
+      culong = cuint32;
+    {$ELSE}
+      clong = cint64;
+      culong = cuint64;
+    {$ENDIF}
+  {$ENDIF}
+  {$EXTERNALSYM cint}
+  {$EXTERNALSYM cuint}
+  {$EXTERNALSYM clong}
+  {$EXTERNALSYM culong}
+
 {$ENDIF}
 
 { Data types for all compilers }
 type
+  PPUInt8Array = ^PUInt8Array;
   PUInt8Array = ^TUInt8Array;
   TUInt8Array = array [0..MAXINT shr 1] of cuint8;
 
   ppcuint8 = ^pcuint8;
 
+  {$IFDEF WANT_CWCHAR_T}
+    (* wchar_t is the "wide character" type of the C language.
+     * The size of this type is platform- and compiler-dependent.
+     *
+     * While FPC does have it's own "wide character" type, System.WideChar,
+     * that one is defined as always being 16-bits, so we can't re-use it here.
+     *
+     * When using FPC on Unices, the UnixType unit provides a wchar_t definition.
+     *
+     * On other systems/compiler combos, let's just go
+     * by what the CPP reference wiki claims, i.e:
+     * - wchar_t is 16-bits on Windows
+     * - wchar_t is 32-bits on Linux "and many other non-Windows systems"
+     *
+     * See: https://en.cppreference.com/w/cpp/language/types#Character_types
+     *)
+    {$IF DEFINED(FPC) AND DEFINED(UNIX)}
+      cwchar_t = UnixType.wchar_t;
+    {$ELSE}
+      {$IF DEFINED(WIN32) OR DEFINED(WIN64)}
+        cwchar_t = cuint16;
+      {$ELSE}
+        cwchar_t = cuint32;
+      {$ENDIF}
+    {$ENDIF}
+    {$EXTERNALSYM cwchar_t}
+    pcwchar_t = ^cwchar_t;
+  {$ENDIF}

@@ -13,7 +13,7 @@
  *
  *  \return -1, there is no error handling for this function
  *}
-function SDL_SetError(const fmt: PAnsiChar): cint; cdecl;
+function SDL_SetError(const fmt: PAnsiChar; args: array of const): cint; cdecl;
   external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_SetError' {$ENDIF} {$ENDIF};
 
 {**
@@ -64,6 +64,8 @@ procedure SDL_ClearError cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MAC
 
 
 type
+  PPSDL_ErrorCode = ^PSDL_ErrorCode;
+  PSDL_ErrorCode = ^TSDL_ErrorCode;
   TSDL_ErrorCode = (SDL_ENOMEM,
                     SDL_EFREAD,
                     SDL_EFWRITE,

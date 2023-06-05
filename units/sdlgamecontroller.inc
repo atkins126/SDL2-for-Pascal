@@ -14,23 +14,32 @@
 
 {* The gamecontroller structure used to identify an SDL game controller *}
 type
+  PPSDL_GameController = ^PSDL_GameController;
   PSDL_GameController = ^TSDL_GameController;
   TSDL_GameController = record end;
 
+  PPSDL_GameControllerType = ^PSDL_GameControllerType;
+  PSDL_GameControllerType = ^TSDL_GameControllerType;
   TSDL_GameControllerType = type cint;
 const
-  SDL_CONTROLLER_TYPE_UNKNOWN             = TSDL_GameControllerType(0);
-  SDL_CONTROLLER_TYPE_XBOX360             = TSDL_GameControllerType(1);
-  SDL_CONTROLLER_TYPE_XBOXONE             = TSDL_GameControllerType(2);
-  SDL_CONTROLLER_TYPE_PS3                 = TSDL_GameControllerType(3);
-  SDL_CONTROLLER_TYPE_PS4                 = TSDL_GameControllerType(4);
-  SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO = TSDL_GameControllerType(5);
-  SDL_CONTROLLER_TYPE_VIRTUAL             = TSDL_GameControllerType(6);
-  SDL_CONTROLLER_TYPE_PS5                 = TSDL_GameControllerType(7);
-  SDL_CONTROLLER_TYPE_AMAZON_LUNA         = TSDL_GameControllerType(8);
-  SDL_CONTROLLER_TYPE_GOOGLE_STADIA       = TSDL_GameControllerType(9);
+  SDL_CONTROLLER_TYPE_UNKNOWN                      = TSDL_GameControllerType(0);
+  SDL_CONTROLLER_TYPE_XBOX360                      = TSDL_GameControllerType(1);
+  SDL_CONTROLLER_TYPE_XBOXONE                      = TSDL_GameControllerType(2);
+  SDL_CONTROLLER_TYPE_PS3                          = TSDL_GameControllerType(3);
+  SDL_CONTROLLER_TYPE_PS4                          = TSDL_GameControllerType(4);
+  SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO          = TSDL_GameControllerType(5);
+  SDL_CONTROLLER_TYPE_VIRTUAL                      = TSDL_GameControllerType(6);
+  SDL_CONTROLLER_TYPE_PS5                          = TSDL_GameControllerType(7);
+  SDL_CONTROLLER_TYPE_AMAZON_LUNA                  = TSDL_GameControllerType(8);
+  SDL_CONTROLLER_TYPE_GOOGLE_STADIA                = TSDL_GameControllerType(9);
+  SDL_CONTROLLER_TYPE_NVIDIA_SHIELD                = TSDL_GameControllerType(10);
+  SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_LEFT  = TSDL_GameControllerType(11);
+  SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT = TSDL_GameControllerType(12);
+  SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_PAIR  = TSDL_GameControllerType(13);
 
 type
+  PPSDL_GameControllerBindType = ^PSDL_GameControllerBindType;
+  PSDL_GameControllerBindType = ^TSDL_GameControllerBindType;
   TSDL_GameControllerBindType = type cint;
 const
   SDL_CONTROLLER_BINDTYPE_NONE   = TSDL_GameControllerBindType(0);
@@ -47,6 +56,8 @@ type
     hat_mask: cint;
   end;
 
+  PPSDL_GameControllerButtonBind = ^PSDL_GameControllerButtonBind;
+  PSDL_GameControllerButtonBind = ^TSDL_GameControllerButtonBind;
   TSDL_GameControllerButtonBind = record
     bindType: TSDL_GameControllerBindType;
     case cint of
@@ -142,6 +153,26 @@ function SDL_IsGameController(joystick_index: cint): TSDL_Bool cdecl; external S
 function SDL_GameControllerNameForIndex(joystick_index: cint): PAnsiChar cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_GameControllerNameForIndex' {$ENDIF} {$ENDIF};
 
 {**
+ * Get the implementation dependent path for the game controller.
+ *
+ * This function can be called before any controllers are opened.
+ *
+ * `joystick_index` is the same as the `device_index` passed to
+ * SDL_JoystickOpen().
+ *
+ * \param joystick_index the device_index of a device, from zero to
+ *                       SDL_NumJoysticks()-1
+ * \returns the implementation-dependent path for the game controller, or NIL
+ *          if there is no path or the index is invalid.
+ *
+ * \since This function is available since SDL 2.24.0.
+ *
+ * \sa SDL_GameControllerPath
+ *}
+function SDL_GameControllerPathForIndex(joystick_index: cint): PAnsiChar; cdecl;
+  external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_GameControllerPathForIndex' {$ENDIF} {$ENDIF};
+
+{**
  * Get the type of a game controller.
  * This can be called before any controllers are opened.
  *}
@@ -190,6 +221,24 @@ function SDL_GameControllerFromPlayerIndex(player_index: cint): PSDL_GameControl
 function SDL_GameControllerName(gamecontroller: PSDL_GameController): PAnsiChar cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_GameControllerName' {$ENDIF} {$ENDIF};
 
 {**
+ * Get the implementation-dependent path for an opened game controller.
+ *
+ * This is the same path as returned by SDL_GameControllerNameForIndex(), but
+ * it takes a controller identifier instead of the (unstable) device index.
+ *
+ * \param gamecontroller a game controller identifier previously returned by
+ *                       SDL_GameControllerOpen()
+ * \returns the implementation dependent path for the game controller, or NIL
+ *          if there is no path or the identifier passed is invalid.
+ *
+ * \since This function is available since SDL 2.24.0.
+ *
+ * \sa SDL_GameControllerPathForIndex
+ *}
+function SDL_GameControllerPath(gamecontroller: PSDL_GameController): PAnsiChar; cdecl;
+  external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_GameControllerPath' {$ENDIF} {$ENDIF};
+
+{**
  * Get the type of this currently opened controller
  *
  * This is the same name as returned by SDL_GameControllerTypeForIndex(), but
@@ -214,6 +263,19 @@ procedure SDL_GameControllerSetPlayerIndex(gamecontroller: PSDL_GameController; 
   external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_GameControllerSetPlayerIndex' {$ENDIF} {$ENDIF};
 
 {**
+ * Get the USB vendor ID of an opened controller, if available.
+ *
+ * If the vendor ID isn't available this function returns 0.
+ *
+ * \param gamecontroller the game controller object to query.
+ * \return the USB vendor ID, or zero if unavailable.
+ *
+ * \since This function is available since SDL 2.0.6.
+ *}
+function SDL_GameControllerGetVendor(gamecontroller: PSDL_GameController): cuint16; cdecl;
+  external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_GameControllerGetVendor' {$ENDIF} {$ENDIF};
+
+{**
  * Get the USB product ID of an opened controller, if available.
  * If the product ID isn't available, this function returns 0.
  *}
@@ -226,6 +288,19 @@ function SDL_GameControllerGetProduct(gamecontroller: PSDL_GameController): cuin
  *}
 function SDL_GameControllerGetProductVersion(gamecontroller: PSDL_GameController): cuint16; cdecl;
   external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_GameControllerGetProductVersion' {$ENDIF} {$ENDIF};
+
+{**
+ * Get the firmware version of an opened controller, if available.
+ *
+ * If the firmware version isn't available this function returns 0.
+ *
+ * \param gamecontroller the game controller object to query.
+ * \return the controller firmware version, or zero if unavailable.
+ *
+ * \since This function is available since SDL 2.24.0.
+ *}
+function SDL_GameControllerGetFirmwareVersion(gamecontroller: PSDL_GameController): cuint16; cdecl;
+  external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_GameControllerGetFirmwareVersion' {$ENDIF} {$ENDIF};
 
 {**
  * Get the serial number of an opened controller, if available.
@@ -271,6 +346,7 @@ procedure SDL_GameControllerUpdate() cdecl; external SDL_LibName {$IFDEF DELPHI}
    *}
 
 type
+  PPSDL_GameControllerAxis = ^PSDL_GameControllerAxis;
   PSDL_GameControllerAxis = ^TSDL_GameControllerAxis;
   TSDL_GameControllerAxis = type cint;
 const
@@ -320,6 +396,7 @@ function SDL_GameControllerGetAxis(gamecontroller: PSDL_GameController; axis: TS
    *  The list of buttons available from a controller
    *}
 type
+  PPSDL_GameControllerButton = ^PSDL_GameControllerButton;
   PSDL_GameControllerButton = ^TSDL_GameControllerButton;
   TSDL_GameControllerButton = type cint;
 const

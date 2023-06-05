@@ -8,7 +8,7 @@ conversion project.
 
 C:
 
-```
+```c
 #define SDL_HAT_CENTERED    0x00
 #define SDL_HAT_UP          0x01
 #define SDL_HAT_RIGHT       0x02
@@ -22,7 +22,7 @@ C:
 
 Pascal:
 
-```
+```pascal
 const
   SDL_HAT_CENTERED  = $00;
   SDL_HAT_UP        = $01;
@@ -39,7 +39,7 @@ const
 
 C:
 
-```
+```c
 typedef enum
 {
    SDL_JOYSTICK_POWER_UNKNOWN = -1,
@@ -54,7 +54,7 @@ typedef enum
 
 Pascal:
 
-```
+```pascal
 type
   TSDL_JoystickPowerLevel = type Integer;
 
@@ -70,8 +70,14 @@ const
 
 Hint 1: C enums start at 0 if no explicit value is set.
 
-Hint 2: The type should be Word if only unsigned values are possible. Otherwise
-it should be Integer.
+Hint 2: The type should always be cint. Most C compilers have the enum elements
+> In C, each enumeration constant has type int and each enumeration type
+> is compatible with some integer type. (The integer types include all three
+> character types–plain, signed, and unsigned.) The choice of compatible
+> type is implementation-defined. The C standard grants the freedom to
+> use different integer types to represent different enumeration types,
+> but most compilers just use int to represent all enumeration types.
+Ref.: [https://www.embedded.com/enumerations-are-integers-except-when-theyre-not/](https://www.embedded.com/enumerations-are-integers-except-when-theyre-not/)
 
 Hint 3: Do not translate C enums to Pascal enums. C enums are handled like plain
 integers which will make bitwise operations (e. g. in macros) possible
@@ -81,7 +87,7 @@ without typecasting.
 
 C:
 
-```
+```c
 typedef struct SDL_version
 {
     Uint8 major;        /**< major version */
@@ -92,7 +98,7 @@ typedef struct SDL_version
 
 Pascal:
 
-```
+```pascal
 type
   PSDL_Version = ^TSDL_Version;
   TSDL_Version = record
@@ -109,13 +115,13 @@ the best way to handle this is still not finally decided on. (see issue
 
 C:
 
-```
+```c
 typedef struct SDL_Window SDL_Window;
 ```
 
 Pascal:
 
-```
+```pascal
 type
   PSDL_Window = ^TSDL_Window;
   TSDL_Window = record end;
@@ -125,7 +131,7 @@ type
 
 C:
 
-```
+```c
 typedef union {
     /** \brief A cutoff alpha value for binarization of the window shape's alpha channel. */
     Uint8 binarizationCutoff;
@@ -135,7 +141,7 @@ typedef union {
 
 Pascal:
 
-```
+```pascal
 type
   PSDL_WindowShapeParams = ^TSDL_WindowShapeParams;
   TSDL_WindowShapeParams = record
@@ -150,7 +156,7 @@ type
 
 C:
 
-```
+```c
 extern DECLSPEC void SDLCALL SDL_LockJoysticks(void);
 
 extern DECLSPEC const char *SDLCALL SDL_JoystickNameForIndex(int device_index);
@@ -158,7 +164,7 @@ extern DECLSPEC const char *SDLCALL SDL_JoystickNameForIndex(int device_index);
 
 Pascal:
 
-```
+```pascal
 procedure SDL_LockJoysticks(); cdecl;
   external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_LockJoysticks' {$ENDIF} {$ENDIF};
 
@@ -173,7 +179,7 @@ Usually a C macro is translated as a Pascal function and implemented in SDL2.pas
 
 C:
 
-```
+```c
 #define SDL_VERSION_ATLEAST(X, Y, Z) \
     (SDL_COMPILEDVERSION >= SDL_VERSIONNUM(X, Y, Z))
 ```
@@ -181,12 +187,12 @@ C:
 Pascal:
 
 _sdlversion.inc (declaration)_:
-```
+```pascal
 function SDL_VERSION_ATLEAST(X,Y,Z: cuint8): Boolean;
 ```
 
 _sdl2.pas (implementation)_:
-```
+```pascal
 function SDL_VERSION_ATLEAST(X,Y,Z: cuint8): Boolean;
 begin
   Result := SDL_COMPILEDVERSION >= SDL_VERSIONNUM(X,Y,Z);
@@ -211,7 +217,7 @@ Pascal's Boolean is different and typically 1 byte in size. ([FPC Ref.](https://
 * DO NOT use TSDL_Bool for macro functions which evaluate to a boolean value, use Pascal's Boolean instead (exception: the value is an argument for a SDL_Bool parameter)
 
 _Example code_
-```
+```pascal
 program SDLBoolTest;
 
 uses SDL2, ctypes, SysUtils;

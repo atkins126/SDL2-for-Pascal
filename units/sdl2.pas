@@ -1,70 +1,37 @@
 unit sdl2;
 
 {
+                                SDL2-for-Pascal
+                               =================
+          Pascal units for SDL2 - Simple Direct MediaLayer, Version 2
+
+  Copyright (C) 2020-2023 PGD Community
+  Maintainers: M. J. Molski and suve
+  Visit: https://github.com/PascalGameDevelopment/SDL2-for-Pascal
+
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2023 Sam Lantinga <slouken@libsdl.org>
+  Visit: http://libsdl.org
 
-  Pascal-Header-Conversion
-  Copyright (C) 2012-2020 Tim Blume aka End/EV1313
+  SDL2-for-Pascal is based upon:
 
-  SDL2-for-Pascal
-  Copyright (C) 2020-2021 PGD Community
+    Pascal-Header-Conversion
+    Copyright (C) 2012-2020 Tim Blume aka End/EV1313
 
-  SDL.pas is based on the files:
-  "sdl.h",
-  "sdl_audio.h",
-  "sdl_blendmode.h",
-  "sdl_clipboard.h",
-  "sdl_cpuinfo.h",
-  "sdl_events.h",
-  "sdl_error.h",
-  "sdl_filesystem.h",
-  "sdl_gamecontroller.h",
-  "sdl_gesture.h",
-  "sdl_haptic.h",
-  "sdl_hints.h",
-  "sdl_joystick.h",
-  "sdl_keyboard.h",
-  "sdl_keycode.h",
-  "sdl_loadso.h",
-  "sdl_log.h",
-  "sdl_pixels.h",
-  "sdl_power.h",
-  "sdl_main.h",
-  "sdl_messagebox.h",
-  "sdl_mouse.h",
-  "sdl_mutex.h",
-  "sdl_rect.h",
-  "sdl_render.h",
-  "sdl_rwops.h",
-  "sdl_scancode.h",
-  "sdl_shape.h",
-  "sdl_stdinc.h",
-  "sdl_surface.h",
-  "sdl_system.h",
-  "sdl_syswm.h",
-  "sdl_thread.h",
-  "sdl_timer.h",
-  "sdl_touch.h",
-  "sdl_version.h",
-  "sdl_video.h"
+    JEDI-SDL : Pascal units for SDL
+    Copyright (C) 2000 - 2004 Dominique Louis <Dominique@SavageSoftware.com.au>
 
-  I will not translate:
+  sdl2.pas is based on the C header files in the include folder
+  of the original Simple DirectMedia Layer repository.
+  See: https://github.com/libsdl-org/SDL
+
+  OpenGL header files are not translated:
   "sdl_opengl.h",
   "sdl_opengles.h"
   "sdl_opengles2.h"
 
-  cause there's a much better OpenGL-Header avaible at delphigl.com:
-
-  the dglopengl.pas
-
-  You'll find it nowadays here: https://github.com/SaschaWillems/dglOpenGL
-
-  Parts of the SDL.pas are from the SDL-1.2-Headerconversion from the JEDI-Team,
-  written by Domenique Louis and others.
-
-  I've changed the names of the dll for 32 & 64-Bit, so theres no conflict
-  between 32 & 64 bit Libraries.
+  There is a much better OpenGL-Header avaible at delphigl.com: dglopengl.pas
+  See: https://github.com/SaschaWillems/dglOpenGL
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no case will the authors be held liable for any damages
@@ -84,6 +51,7 @@ unit sdl2;
 
   Special Thanks to:
 
+   - Tim Blume and everyone else contributing to the "Pascal-Header-Conversion"
    - DelphiGL.com - Community
    - Domenique Louis and everyone else from the JEDI-Team
    - Sam Latinga and everyone else from the SDL-Team
@@ -107,6 +75,7 @@ interface
     uses
       {$IFDEF FPC}
       ctypes,
+      UnixType,
       {$ENDIF}
       {$IFDEF DARWIN}
       CocoaAll;
@@ -118,7 +87,8 @@ interface
 
   {$IF DEFINED(UNIX) AND DEFINED(ANDROID) AND DEFINED(FPC)}
     uses
-      ctypes;
+      ctypes,
+      UnixType;
   {$ENDIF}
 
 const
@@ -151,6 +121,7 @@ const
   {$ENDIF}
 
 
+{$DEFINE WANT_CWCHAR_T}
 {$I ctypes.inc}                  // C data types
 
                                  {SDL2 version of the represented header file}
@@ -165,38 +136,55 @@ const
 {$I sdlmutex.inc}                // 2.0.14 WIP
 {$I sdltimer.inc}                // 2.0.18
 {$I sdlpixels.inc}               // 2.0.14 WIP
-{$I sdlrect.inc}                 // 2.0.14
+{$I sdlrect.inc}                 // 2.24.0
 {$I sdlrwops.inc}                // 2.0.14
-{$I sdlaudio.inc}
+{$I sdlaudio.inc}                // 2.26.3
 {$I sdlblendmode.inc}            // 2.0.14
 {$I sdlsurface.inc}              // 2.0.14
-{$I sdlshape.inc}                // 2.0.14
-{$I sdlvideo.inc}                // 2.0.14
-{$I sdlhints.inc}                // 2.0.22
-{$I sdlloadso.inc}
+{$I sdlvideo.inc}                // 2.24.0
+{$I sdlshape.inc}                // 2.24.0
+{$I sdlhints.inc}                // 2.26.0
+{$I sdlloadso.inc}               // 2.24.1
 {$I sdlmessagebox.inc}           // 2.0.14
 {$I sdlrenderer.inc}             // 2.0.22
-{$I sdlscancode.inc}
-{$I sdlkeyboard.inc}
-{$I sdlmouse.inc}
-{$I sdljoystick.inc}
-{$I sdlsensor.inc}
-{$I sdlgamecontroller.inc}       // 2.0.22
-{$I sdlhaptic.inc}
-{$I sdltouch.inc}
-{$I sdlgesture.inc}
+{$I sdlscancode.inc}             // 2.26.2
+{$I sdlkeycode.inc}              // 2.26.2
+{$I sdlkeyboard.inc}             // 2.24.1
+{$I sdlmouse.inc}                // 2.0.24
+{$I sdlguid.inc}                 // 2.24.0
+{$I sdljoystick.inc}             // 2.24.0
+{$I sdlsensor.inc}               // 2.26.0
+{$I sdlgamecontroller.inc}       // 2.24.0
+{$I sdlhaptic.inc}               // 2.26.2
+{$I sdlhidapi.inc}               // 2.0.18
+{$I sdltouch.inc}                // 2.24.0
+{$I sdlgesture.inc}              // 2.26.2
 {$I sdlsyswm.inc}
-{$I sdlevents.inc}
+{$I sdlevents.inc}               // 2.24.0
 {$I sdllocale.inc}               // 2.0.14
-{$I sdlclipboard.inc}
+{$I sdlclipboard.inc}            // 2.24.1
 {$I sdlcpuinfo.inc}              // 2.0.14
-{$I sdlfilesystem.inc}
+{$I sdlfilesystem.inc}           // 2.24.1
 {$I sdllog.inc}                  // 2.0.14
 {$I sdlmisc.inc}                 // 2.0.14
-{$I sdlsystem.inc}
+{$I sdlsystem.inc}               // 2.24.0
 {$I sdl.inc}                     // 2.0.14
 
 implementation
+
+(*
+ * We need an strlen() implementation for some operations on C-strings.
+ * FPC ships one in the Strings unit; Delphi has one in the AnsiStrings unit.
+ * Since FPC defines "DELPHI" when building in Delphi-compatibility mode,
+ * check if "FPC" is defined to determine which compiler is used.
+ *)
+uses
+	{$IFDEF FPC}
+		Strings
+	{$ELSE}
+		AnsiStrings
+	{$ENDIF}
+	;
 
 // Macros from "sdl_version.h"
 procedure SDL_VERSION(out x: TSDL_Version);
@@ -223,10 +211,10 @@ begin
   Result := SDL_COMPILEDVERSION >= SDL_VERSIONNUM(X,Y,Z);
 end;
 
-//from "sdl_mouse.h"
-function SDL_Button(button: cint32): cint32;
+//Macros from "sdl_mouse.h"
+function SDL_Button(X: cint): cint;
 begin
-  Result := 1 shl (button - 1); 
+  Result := 1 shl (X - 1);
 end;
 
 {$IFDEF WINDOWS}
@@ -250,12 +238,50 @@ end;
 
 function SDL_RectEmpty(const r: PSDL_Rect): Boolean;
 begin
-  Result := (r^.w <= 0) or (r^.h <= 0);
+  Result := (r = NIL) or (r^.w <= 0) or (r^.h <= 0);
 end;
 
 function SDL_RectEquals(const a, b: PSDL_Rect): Boolean;
 begin
   Result := (a^.x = b^.x) and (a^.y = b^.y) and (a^.w = b^.w) and (a^.h = b^.h);
+end;
+
+function SDL_PointInFRect(const p: PSDL_FPoint; const r: PSDL_FRect): Boolean;
+begin
+  Result :=
+    (p^.x >= r^.x) and (p^.x < (r^.x + r^.w))
+    and
+    (p^.y >= r^.y) and (p^.y < (r^.y + r^.h))
+end;
+
+function SDL_FRectEmpty(const r: PSDL_FRect): Boolean;
+begin
+  Result := (r = NIL) or (r^.w <= cfloat(0.0)) or (r^.h <= cfloat(0.0))
+end;
+
+function SDL_FRectEqualsEpsilon(const a, b: PSDL_FRect; const epsilon: cfloat): Boolean;
+begin
+  Result :=
+    (a <> NIL) and
+    (b <> NIL) and
+    (
+      (a = b)
+      or
+      (
+        (SDL_fabsf(a^.x - b^.x) <= epsilon)
+        and
+        (SDL_fabsf(a^.y - b^.y) <= epsilon)
+        and
+        (SDL_fabsf(a^.w - b^.w) <= epsilon)
+        and
+        (SDL_fabsf(a^.h - b^.h) <= epsilon)
+      )
+    )
+end;
+
+function SDL_FRectEquals(const a, b: PSDL_FRect): Boolean; Inline;
+begin
+  Result := SDL_FRectEqualsEpsilon(a, b, SDL_FLT_EPSILON)
 end;
 
 //from "sdl_atomic.h"
@@ -285,9 +311,9 @@ end;
 
 //from "sdl_audio.h"
 
-function SDL_LoadWAV(_file: PAnsiChar; spec: PSDL_AudioSpec; audio_buf: ppcuint8; audio_len: pcuint32): PSDL_AudioSpec;
+function SDL_LoadWAV(file_: PAnsiChar; spec: PSDL_AudioSpec; audio_buf: ppcuint8; audio_len: pcuint32): PSDL_AudioSpec;
 begin
-  Result := SDL_LoadWAV_RW(SDL_RWFromFile(_file, 'rb'), 1, spec, audio_buf, audio_len);
+  Result := SDL_LoadWAV_RW(SDL_RWFromFile(file_, 'rb'), 1, spec, audio_buf, audio_len);
 end;
   
 function SDL_AUDIO_BITSIZE(x: Cardinal): Cardinal;
@@ -383,11 +409,22 @@ begin
   Result := (mode = ShapeModeDefault) or (mode = ShapeModeBinarizeAlpha) or (mode = ShapeModeReverseBinarizeAlpha);
 end;
 
-//from "sdl_sysvideo.h"
+// from "sdl_stdinc.h"
 
-function FULLSCREEN_VISIBLE(W: PSDL_Window): Variant;
+// Note: We're using FPC's Strings.strlen() here, not SDL_strlen().
+function SDL_iconv_utf8_locale(Const str: PAnsiChar): PAnsiChar; cdecl;
 begin
-  Result := ((W^.flags and SDL_WINDOW_FULLSCREEN) and (W^.flags and SDL_WINDOW_SHOWN) and not (W^.flags and SDL_WINDOW_MINIMIZED));
+  Result := SDL_iconv_string('', 'UTF-8', str, strlen(str)+1)
+end;
+
+function SDL_iconv_utf8_ucs2(Const str: PAnsiChar): pcUint16; cdecl;
+begin
+	Result := pcUint16(SDL_iconv_string('UCS-2-INTERNAL', 'UTF-8', str, strlen(str)+1))
+end;
+
+function SDL_iconv_utf8_ucs4(Const str: PAnsiChar): pcUint32; cdecl;
+begin
+	Result := pcUint32(SDL_iconv_string('UCS-4-INTERNAL', 'UTF-8', str, strlen(str)+1))
 end;
 
 //from "sdl_video.h"

@@ -19,6 +19,8 @@ const
  *  CRITICAL level.
  *}
 type
+  PPSDL_LogCategory = ^PSDL_LogCategory;
+  PSDL_LogCategory = ^TSDL_LogCategory;
   TSDL_LogCategory = type cint;
 
 const
@@ -50,7 +52,8 @@ const
 {**
  *  \brief The predefined log priorities
  *}
-type 
+type
+  PPSDL_LogPriority = ^PSDL_LogPriority;
   PSDL_LogPriority = ^TSDL_LogPriority;
   TSDL_LogPriority = type cint32;
 const
@@ -146,13 +149,14 @@ procedure SDL_LogMessageV(category: TSDL_LogCategory; priority: TSDL_LogPriority
  *  \brief The prototype for the log output function
  *}
 type
+  PPSDL_LogOutputFunction = ^PSDL_LogOutputFunction;
+  PSDL_LogOutputFunction = ^TSDL_LogOutputFunction;
   TSDL_LogOutputFunction = procedure(
     userdata: Pointer;
     category: TSDL_LogCategory;
     priority: TSDL_LogPriority;
-    const msg: PAnsiChar);
-  PSDL_LogOutputFunction = ^TSDL_LogOutputFunction;
-  
+    const msg: PAnsiChar); cdecl;
+
 {**
  *  \brief Get the current log output function.
  *}
